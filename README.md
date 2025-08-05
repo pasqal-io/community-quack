@@ -1,10 +1,13 @@
 Analog Neutral Atom Quantum Compiler in Golang
+
 This repository contains a Go-based compiler for analog neutral atom quantum computers. The compiler is designed to solve various optimization problems by mapping them to the Ising Hamiltonian, a fundamental model in statistical mechanics. This approach leverages the unique properties of neutral atoms and their interactions to find the ground state of the Hamiltonian, which corresponds to the solution of the original problem.
 
 The Physics: Analog Neutral Atom Quantum Computing
+
 Analog quantum computing is a paradigm where the quantum system's evolution is directly analogous to the problem being solved. In our case, we use a system of neutral atoms to simulate the behavior of the Ising model.
 
 Neutral Atoms as Qubits
+
 In this quantum computing architecture, individual neutral atoms, such as Rubidium-87, are used as qubits. These atoms are cooled to ultra-low temperatures and trapped in a two-dimensional array using a grid of focused laser beams called optical tweezers.
 
 The two quantum states of the qubit, |0⟩ and |1⟩, are represented by two different energy levels of the atom. Typically, these are a ground state and a highly excited Rydberg state.
