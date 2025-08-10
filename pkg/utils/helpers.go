@@ -64,10 +64,11 @@ func CreateSimplePulserSequence() (string, error) {
 	// Define a simple pulse
 	pulse := Pulse{
 		Channel: "ch0",
+		// window function for amplitude
 		Amplitude: Waveform{
 			Type:     "blackman",
 			Duration: 1000,
-			Area:     3.141592653589793, // Approximate pi for amplitude area
+			Area:     3.1415, // Approximate pi for amplitude area
 		},
 		Detuning: Waveform{
 			Type:     "ramp",
