@@ -1,8 +1,6 @@
 package utils
 
-import (q
-	"encoding/json"
-)
+import "encoding/json"
 
 // Waveform represents a waveform in the Pulser sequence.
 type Waveform struct {
