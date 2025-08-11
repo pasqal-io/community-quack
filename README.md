@@ -2,30 +2,26 @@
 
 A cross-platform desktop application for compiling Ising Hamiltonians into Pasqal pulser sequences. This tool provides a user-friendly interface for researchers and developers working with neutral atom quantum computers, simplifying the process of translating a theoretical model into a hardware-compatible pulse sequence.
 
-📖 Table of Contents
+Table of Contents
 Key Features
-
-🏛️ Architecture
-
-🚀 Getting Started
-
+Architecture
+Getting Started
 Prerequisites
-
 Installation
-
-🕹️ How to Use
+How to Use
 
 Input: Ising Model
 
 Output: Pulser Sequence
 
-💻 For Developers
+For Developers
 
-🤝 Contributing
+Contributing
 
-📜 License
+License
 
-✨ Key Features
+Key Features
+
 Ising Hamiltonian Input: Define your quantum system using the familiar Ising model format.
 
 Pasqal Pulse Generation: Automatically compiles the model into a valid sequence for Pasqal's pulser library.
@@ -36,12 +32,17 @@ Modern GUI: A sleek and responsive user interface built with Wails and Svelte.
 
 Cross-Platform: Build and run the application on Windows, macOS, and Linux.
 
-🏛️ Architecture
+Architecture
+
 This application leverages the power of Wails to create a bridge between a Go backend and a Svelte web-based frontend.
 
-Frontend (Svelte): The frontend/ directory contains the Svelte application. It is responsible for rendering the UI components, managing user input, and displaying the results. It makes calls to the Go backend for the core compilation logic.
+Frontend (Svelte): 
 
-Backend (Go): The main.go file and other .go source files contain the application's core logic. This includes:
+The frontend/ directory contains the Svelte application. It is responsible for rendering the UI components, managing user input, and displaying the results. It makes calls to the Go backend for the core compilation logic.
+
+Backend (Go): 
+
+The main.go file and other .go source files contain the application's core logic. This includes:
 
 Parsing and validating the input Ising Hamiltonian.
 
@@ -51,7 +52,7 @@ Exposing methods that can be called directly from the Svelte frontend.
 
 Wails Bridge: Wails handles the communication between the frontend and backend, allowing you to call Go functions from JavaScript and vice-versa. It also manages window creation, menus, and bundling the application into a single executable.
 
-🚀 Getting Started
+Getting Started
 Follow these instructions to get a local copy up and running.
 
 Prerequisites
@@ -76,7 +77,7 @@ wails build
 
 The executable will be located in the build/bin/ directory.
 
-🕹️ How to Use
+How to Use
 Launch the application.
 
 Enter your Ising Hamiltonian parameters into the input text area on the left. See the required format below.
@@ -134,7 +135,7 @@ seq.add(pulse, "global")
 # You can now draw or simulate the sequence
 # seq.draw()
 
-💻 For Developers
+For Developers
 If you want to contribute to the development, you can run the application in live development mode. This provides hot-reloading for both the Go backend and the Svelte frontend.
 
 Navigate to the project directory:
@@ -147,20 +148,7 @@ wails dev
 
 The application will launch, and any changes you make to the Go or Svelte source files will be automatically reloaded.
 
-Project Structure:
-
-.
-├── go.mod              # Go module definition
-├── main.go             # Main Go application entrypoint
-├── compiler/           # Go package for compilation logic
-│   └── compiler.go
-├── frontend/           # Svelte frontend source
-│   ├── src/
-│   ├── svelte.config.js
-│   └── package.json
-└── wails.json          # Wails project configuration
-
-🤝 Contributing
+Contributing
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
 Fork the Project
@@ -173,5 +161,5 @@ Push to the Branch (git push origin feature/AmazingFeature)
 
 Open a Pull Request
 
-📜 License
+License
 Distributed under the MIT License. See LICENSE for more information.
