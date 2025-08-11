@@ -1,177 +1,65 @@
-#Analog Neutral Atom Compiler
+# Svelte + TS + Vite
 
-A cross-platform desktop application for compiling Ising Hamiltonians into Pasqal pulser sequences. This tool provides a user-friendly interface for researchers and developers working with neutral atom quantum computers, simplifying the process of translating a theoretical model into a hardware-compatible pulse sequence.
+This template should help get you started developing with Svelte and TypeScript in Vite.
 
-📖 Table of Contents
-Key Features
+## Recommended IDE Setup
 
-🏛️ Architecture
+[VS Code](https://code.visualstudio.com/)
 
-🚀 Getting Started
++ [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
 
-Prerequisites
+## Need an official Svelte framework?
 
-Installation
+Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its
+serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less,
+and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
 
-🕹️ How to Use
+## Technical considerations
 
-Input: Ising Model
+**Why use this over SvelteKit?**
 
-Output: Pulser Sequence
+- It brings its own routing solution which might not be preferable for some users.
+- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+  `vite dev` and `vite build` wouldn't work in a SvelteKit environment, for example.
 
-💻 For Developers
+This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account
+the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the
+other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte
+project.
 
-🤝 Contributing
+Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been
+structured similarly to SvelteKit so that it is easy to migrate.
 
-📜 License
+**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
 
-✨ Key Features
-Ising Hamiltonian Input: Define your quantum system using the familiar Ising model format.
+Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash
+references keeps the default TypeScript setting of accepting type information from the entire workspace, while also
+adding `svelte` and `vite/client` type information.
 
-Pasqal Pulse Generation: Automatically compiles the model into a valid sequence for Pasqal's pulser library.
+**Why include `.vscode/extensions.json`?**
 
-High-Performance Backend: Core compilation logic is written in Go for speed and efficiency.
+Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to
+install the recommended extension upon opening the project.
 
-Modern GUI: A sleek and responsive user interface built with Wails and Svelte.
+**Why enable `allowJs` in the TS template?**
 
-Cross-Platform: Build and run the application on Windows, macOS, and Linux.
+While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of
+JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds:
+not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing
+JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
 
-🏛️ Architecture
-This application leverages the power of Wails to create a bridge between a Go backend and a Svelte web-based frontend.
+**Why is HMR not preserving my local component state?**
 
-Frontend (Svelte): The frontend/ directory contains the Svelte application. It is responsible for rendering the UI components, managing user input, and displaying the results. It makes calls to the Go backend for the core compilation logic.
+HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr`
+and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the
+details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
 
-Backend (Go): The main.go file and other .go source files contain the application's core logic. This includes:
+If you have state that's important to retain within a component, consider creating an external store which would not be
+replaced by HMR.
 
-Parsing and validating the input Ising Hamiltonian.
-
-Implementing the compilation algorithm to map Hamiltonian coefficients to pulse parameters (amplitude, detuning, duration).
-
-Exposing methods that can be called directly from the Svelte frontend.
-
-Wails Bridge: Wails handles the communication between the frontend and backend, allowing you to call Go functions from JavaScript and vice-versa. It also manages window creation, menus, and bundling the application into a single executable.
-
-🚀 Getting Started
-Follow these instructions to get a local copy up and running.
-
-Prerequisites
-You must have the following tools installed on your system:
-
-Go (version 1.18 or newer)
-
-Node.js (LTS version)
-
-Wails CLI: Follow the official installation guide at wails.io/docs/gettingstarted/installation.
-
-Installation
-Clone the repository:
-
-git clone https://github.com/your-username/analog-neutral-atom-compiler.git
-cd analog-neutral-atom-compiler
-
-Build the application:
-The Wails CLI will handle all dependencies and compile the application into a single executable for your platform.
-
-wails build
-
-The executable will be located in the build/bin/ directory.
-
-🕹️ How to Use
-Launch the application.
-
-Enter your Ising Hamiltonian parameters into the input text area on the left. See the required format below.
-
-Click the "Compile" button.
-
-The generated Pasqal pulser sequence will appear in the output panel on the right. You can use the "Copy" button to copy it to your clipboard.
-
-Input: Ising Model
-The compiler expects the Ising model to be defined in a simple JSON format. The JSON object should contain keys for the external magnetic field (h) and the coupling strengths (J).
-
-h: A map where keys are atom indices (as strings) and values are the local field coefficients.
-
-J: A map where keys are comma-separated pairs of atom indices (e.g., "0,1") and values are the coupling strengths.
-
-Example Input:
-
-{
-  "h": {
-    "0": 0.5,
-    "1": -0.3,
-    "2": 0.2
-  },
-  "J": {
-    "0,1": 1.0,
-    "1,2": -0.8
-  }
-}
-
-Output: Pulser Sequence
-The output is a Python code snippet that uses the pulser library to declare the pulse sequence. This can be directly integrated into your quantum computing scripts.
-
-Example Output:
-
-from pulser import Pulse, Sequence, Register
-
-# Define atom register (assuming a simple layout)
-qubits = {"0": (0, 0), "1": (0, 5), "2": (5, 0)}
-reg = Register(qubits)
-
-seq = Sequence(reg, PasqalDevice)
-
-# Define Pulse
-# This part is generated by the compiler
-# Example: a simple global pulse
-pulse = Pulse.ConstantPulse(
-    duration=1000, 
-    amplitude=3.5, 
-    detuning=-2.5, 
-    phase=0
-)
-
-seq.add(pulse, "global")
-
-# You can now draw or simulate the sequence
-# seq.draw()
-
-💻 For Developers
-If you want to contribute to the development, you can run the application in live development mode. This provides hot-reloading for both the Go backend and the Svelte frontend.
-
-Navigate to the project directory:
-
-cd analog-neutral-atom-compiler
-
-Run the development server:
-
-wails dev
-
-The application will launch, and any changes you make to the Go or Svelte source files will be automatically reloaded.
-
-Project Structure:
-
-.
-├── go.mod              # Go module definition
-├── main.go             # Main Go application entrypoint
-├── compiler/           # Go package for compilation logic
-│   └── compiler.go
-├── frontend/           # Svelte frontend source
-│   ├── src/
-│   ├── svelte.config.js
-│   └── package.json
-└── wails.json          # Wails project configuration
-
-🤝 Contributing
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
-
-Fork the Project
-
-Create your Feature Branch (git checkout -b feature/AmazingFeature)
-
-Commit your Changes (git commit -m 'Add some AmazingFeature')
-
-Push to the Branch (git push origin feature/AmazingFeature)
-
-Open a Pull Request
-
-📜 License
-Distributed under the MIT License. See LICENSE for more information.
+```ts
+// store.ts
+// An extremely simple external store
+import { writable } from 'svelte/store'
+export default writable(0)
+```
