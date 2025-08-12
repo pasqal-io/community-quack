@@ -11,7 +11,7 @@ High-Performance Backend: Core compilation logic is written in Go for speed and 
 
 Modern GUI: A sleek and responsive user interface built with Wails and Svelte.
 
-Cross-Platform: Build and run the application on Windows, macOS, and Linux.
+Cross-Platform: Build and run the application on Windows, macOS and Linux.
 
 ### Architecture
 
@@ -82,7 +82,7 @@ Example Input:
 {
   "h": {
     "0": 0.5,
-    "1": -0.3,
+    "1": -0.1,
     "2": 0.2
   },
   "J": {
@@ -109,7 +109,7 @@ seq = Sequence(reg, PasqalDevice)
 ### Example: a simple global pulse
 pulse = Pulse.ConstantPulse(
     duration=1000, 
-    amplitude=3.5, 
+    amplitude=1.5, 
     detuning=-2.5, 
     phase=0
 )
