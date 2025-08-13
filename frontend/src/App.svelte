@@ -9,6 +9,7 @@
 
   // State variables
   let numVertices: number = 3; // Default number of vertices
+  let numColors: number = 2; // Default number of colors (k)
   let edges: Edge[] = []; // List of edges
   let newFrom: number = 0;
   let newTo: number = 1;
@@ -41,28 +42,47 @@
     generateJSON();
   }
 
-  // Function to generate Rydberg Hamiltonian JSON for MIS
+  // Function to generate Rydberg Hamiltonian JSON for k-Coloring
   function generateJSON() {
-    // For MIS, we map to a Rydberg Hamiltonian where selected vertices are in the Rydberg state (|1⟩).
-    // The blockade effect ensures adjacent vertices are not both selected.
+    // For k-Coloring, each vertex-color pair (v, c) is a qubit. We need to:
+    // 1. Ensure each vertex is assigned exactly one color (local fields).
+    // 2. Penalize adjacent vertices having the same color (interactions).
     const h: { [key: string]: number } = {};
-    for (let i = 0; i < numVertices; i++) {
-      h[i.toString()] = -1; // Local detuning to favor selecting vertices (maximize independent set)
+    const J: { [key: string]: number } = {};
+
+    // For each vertex, encourage exactly one color (via penalty for deviation)
+    for (let v = 0; v < numVertices; v++) {
+      for (let c = 0; c < numColors; c++) {
+        const qubit = `${v}_${c}`; // Qubit for vertex v, color c
+        h[qubit] = -1; // Encourage assigning a color
+      }
     }
 
-    const J: { [key: string]: number } = {};
+    // Penalize adjacent vertices having the same color
     edges.forEach(edge => {
-      // For undirected graphs: smaller ID first for consistency
-      const key = edge.from < edge.to ? `${edge.from},${edge.to}` : `${edge.to},${edge.from}`;
-      J[key] = 1; // Positive coupling to penalize adjacent vertices being selected
+      for (let c = 0; c < numColors; c++) {
+        const key = `${edge.from}_${c},${edge.to}_${c}`;
+        J[key] = 1; // Positive coupling to penalize same color on adjacent vertices
+      }
     });
+
+    // Optionally, add constraints to ensure each vertex has exactly one color
+    // This can be approximated in the Hamiltonian with penalty terms
+    for (let v = 0; v < numVertices; v++) {
+      for (let c1 = 0; c1 < numColors; c1++) {
+        for (let c2 = c1 + 1; c2 < numColors; c2++) {
+          const key = `${v}_${c1},${v}_${c2}`;
+          J[key] = 1; // Penalize assigning multiple colors to the same vertex
+        }
+      }
+    }
 
     const rydbergHamiltonian = { h, J };
     jsonOutput = JSON.stringify(rydbergHamiltonian, null, 2);
   }
 
   // Simulate solving process
-  async function calculateMIS() {
+  async function calculateColoring() {
     solving = true;
     progress = 0;
     result = '';
@@ -80,18 +100,28 @@
       await new Promise(resolve => setTimeout(resolve, stage.duration));
     }
 
-    // Simulated MIS solution (heuristic for demo purposes)
-    const independentSet: number[] = [];
-    const vertices = Array.from({ length: numVertices }, (_, i) => i);
-    const shuffledVertices = vertices.sort(() => Math.random() - 0.5); // Randomize for simplicity
-    for (const v of shuffledVertices) {
-      if (!independentSet.some(u => edges.some(e => 
-        (e.from === u && e.to === v) || (e.from === v && e.to === u)
-      ))) {
-        independentSet.push(v);
+    // Simulated k-Coloring solution (greedy heuristic for demo purposes)
+    const colors: number[] = new Array(numVertices).fill(-1); // -1 means uncolored
+    const availableColors = Array.from({ length: numColors }, (_, i) => i);
+    const vertices = Array.from({ length: numVertices }, (_, i) => i).sort(() => Math.random() - 0.5);
+
+    for (const v of vertices) {
+      const neighborColors = edges
+        .filter(e => e.from === v || e.to === v)
+        .map(e => e.from === v ? colors[e.to] : colors[e.from])
+        .filter(c => c !== -1);
+      const validColor = availableColors.find(c => !neighborColors.includes(c));
+      if (validColor !== undefined) {
+        colors[v] = validColor;
       }
     }
-    result = `Maximum Independent Set: {${independentSet.join(', ')}} (Size: ${independentSet.length})`;
+
+    const isValid = colors.every(c => c !== -1) && edges.every(e => colors[e.from] !== colors[e.to]);
+    if (isValid) {
+      result = `Valid ${numColors}-Coloring: ${colors.map((c, v) => `Vertex ${v}: Color ${c}`).join(', ')}`;
+    } else {
+      result = `No valid ${numColors}-coloring found for the given graph.`;
+    }
 
     solving = false;
   }
@@ -103,13 +133,17 @@
 </script>
 
 <main>
-  <h1>Maximum Independent Set Problem Input</h1>
+  <h1>k-Coloring Problem Input</h1>
   
   <section>
     <h2>Graph Parameters</h2>
     <label>
       Number of Vertices:
       <input type="number" bind:value={numVertices} min="1" on:change={generateJSON} />
+    </label>
+    <label>
+      Number of Colors (k):
+      <input type="number" bind:value={numColors} min="1" on:change={generateJSON} />
     </label>
     
     <h3>Add Edges</h3>
@@ -135,7 +169,7 @@
   </section>
 
   <section>
-    <button on:click={calculateMIS} disabled={solving}>Calculate</button>
+    <button on:click={calculateColoring} disabled={solving}>Calculate</button>
     {#if solving}
       <div class="progress-container">
         <div class="progress-bar" style="width: {progress}%"></div>
@@ -187,7 +221,7 @@
     font-size: 16px;
   }
   button:disabled {
-    background-color: #111; /* Grayed-out button */
+    background-color: #666; /* Grayed-out button */
     cursor: not-allowed;
   }
   ul {
