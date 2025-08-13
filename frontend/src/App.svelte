@@ -97,12 +97,7 @@
       {/each}
     </ul>
     
-    <button on:click={generateJSON}>Generate Ising Hamiltonian</button>
-  </section>
-  
-  <section>
-    <h2>Generated Ising Hamiltonian JSON (for Analog Neutral Atom Compiler)</h2>
-    <pre>{jsonOutput}</pre>
+    <button on:click={generateJSON}>Calculate</button>
   </section>
 </main>
 
